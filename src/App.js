@@ -12,47 +12,60 @@ class App extends Component {
       { name: 'Eden Clements', number: '6451779', id: 'id-3' },
       { name: 'Annie Copeland', number: '2279126', id: 'id-4' },
     ],
-    filtered: [],
-  }
+    filter: "",
+  };
 
   onSubmit = (name, number, reset) => {
-    this.setState(({ contacts }) => ({
-      contacts: [...contacts, {
-        name: name,
-        number: number,
-        id: uuidv1()
-      }]
-    }));
+    if (this.state.contacts.map(contact => contact.name !== name)) {
+      this.setState(({ contacts }) => ({
+        contacts: [...contacts, {
+          name: name,
+          number: number,
+          id: uuidv1()
+        }]
+      }));
+    } else {
+      alert(`${name} is already in contacts!`);
+    };
     reset();
   };
 
-  handleFilter = (query) => {
-    const filteredContacts = this.state.contacts.filter(
-      e =>
-        e.name.toLowerCase().includes(query.toLowerCase())
+  changeFilter = filter => {
+    this.setState({ filter });
+  };
+
+
+  getVisibleContacts = () => {
+    const { contacts, filter } = this.state;
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(filter.toLowerCase()),
     );
+  };
 
-    //   this.setState((prevState) => ({
-    //     filtered: [prevState, ...filteredContacts],
-    //   }));
-    //   console.log("filtered", this.state.filtered);
-    // };
-
-    this.setState(() => ({
-      filtered: [...filteredContacts],
-    }));
+  removeContact = id => {
+    console.log(id);
+    this.setState(prevState => {
+      return {
+        contacts: prevState.contacts.filter(contact => contact.id !== id)
+      };
+    });
   };
 
   render() {
-    const { contacts, filtered } = this.state;
+    const { filter } = this.state;
+    const visibleContacts = this.getVisibleContacts();
     return <>
       <h1>Phonebook</h1>
       <ContactForm onSubmit={this.onSubmit} />
       <h2>Contacts</h2>
-      <Filter handleFilter={this.handleFilter} />
-      <ContactList contacts={contacts} filtered={filtered} />
+      {visibleContacts.length >= 1 && (
+        <Filter value={filter} onChangeFilter={this.changeFilter} />
+      )}
+      {visibleContacts.length > 0 && (
+        <ContactList contacts={visibleContacts} onRemove={this.removeContact} />
+      )}
     </>
-  }
+  };
 };
 
 export default App;

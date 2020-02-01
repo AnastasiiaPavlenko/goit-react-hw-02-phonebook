@@ -1,0 +1,15 @@
+.contactList {
+    margin-left: 1rem;
+    font-size: 18px;
+};
+
+.listItem {
+};
+
+.button {
+    margin-left: 1rem;
+    background-color: red; 
+    width: 4rem;
+    height: 1.3rem;
+    font-weight: bolder;
+};

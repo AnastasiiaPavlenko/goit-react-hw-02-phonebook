@@ -1,33 +1,10 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-// import styles from './Filter.module.css';
+import React from 'react';
 
-class Filter extends Component {
-    static propTypes = {
-        handleFilter: PropTypes.func.isRequired,
-    }
-
-    state = {
-        value: '',
-    };
-
-    handleChange(event) {
-        this.setState({ value: event.target.value });
-        this.props.handleFilter(this.state.value);
-    }
-
-    reset = () => {
-        this.setState({ name: '' });
-    }
-
-    handleChange = this.handleChange.bind(this);
-
-    render() {
-        return <>
+export default function Filter({ value, onChangeFilter }) {
+    return (
+        <div>
             <label htmlFor="filter">Find contacts by name</label>
-            <input id="filter" type="text" name="filter" value={this.state.value} className="input" onChange={this.handleChange} />
-        </>
-    };
+            <input id="filter" type="text" name="filter" value={value} className="input" onChange={e => onChangeFilter(e.target.value)} />
+        </div>
+    );
 };
-
-export default Filter;
