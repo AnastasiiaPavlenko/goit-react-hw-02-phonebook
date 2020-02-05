@@ -7,16 +7,18 @@ const uuidv1 = require('uuid/v1');
 class App extends Component {
   state = {
     contacts: [
-      { name: 'Rosie Simpson', number: '4591256', id: 'id-1' },
-      { name: 'Hermione Kline', number: '4438912', id: 'id-2' },
-      { name: 'Eden Clements', number: '6451779', id: 'id-3' },
-      { name: 'Annie Copeland', number: '2279126', id: 'id-4' },
+      // { name: 'Rosie Simpson', number: '4591256', id: 'id-1' },
+      // { name: 'Hermione Kline', number: '4438912', id: 'id-2' },
+      // { name: 'Eden Clements', number: '6451779', id: 'id-3' },
+      // { name: 'Annie Copeland', number: '2279126', id: 'id-4' },
     ],
     filter: "",
   };
 
-  onSubmit = (name, number, reset) => {
-    if (this.state.contacts.map(contact => contact.name !== name)) {
+  onSubmit = (name, number) => {
+    if (this.state.contacts.find(contact => contact.number === number)) {
+      alert(`${name} is already in contacts!`);
+    } else {
       this.setState(({ contacts }) => ({
         contacts: [...contacts, {
           name: name,
@@ -24,10 +26,7 @@ class App extends Component {
           id: uuidv1()
         }]
       }));
-    } else {
-      alert(`${name} is already in contacts!`);
     };
-    reset();
   };
 
   changeFilter = filter => {
@@ -43,7 +42,7 @@ class App extends Component {
   };
 
   removeContact = id => {
-    console.log(id);
+    // console.log(id);
     this.setState(prevState => {
       return {
         contacts: prevState.contacts.filter(contact => contact.id !== id)
@@ -52,18 +51,26 @@ class App extends Component {
   };
 
   render() {
-    const { filter } = this.state;
+    const { contacts, filter } = this.state;
     const visibleContacts = this.getVisibleContacts();
+    let show;
+
+    if (visibleContacts.length > 0) {
+      (show = <>
+        <Filter value={filter} onChangeFilter={this.changeFilter} />
+        <ContactList contacts={visibleContacts} onRemove={this.removeContact} />
+      </>)
+    } else if (visibleContacts.length === 0 && contacts.length > 0) {
+      (show = <>
+        <Filter value={filter} onChangeFilter={this.changeFilter} />
+      </>)
+    }
+
     return <>
       <h1>Phonebook</h1>
       <ContactForm onSubmit={this.onSubmit} />
       <h2>Contacts</h2>
-      {visibleContacts.length >= 1 && (
-        <Filter value={filter} onChangeFilter={this.changeFilter} />
-      )}
-      {visibleContacts.length > 0 && (
-        <ContactList contacts={visibleContacts} onRemove={this.removeContact} />
-      )}
+      {show}
     </>
   };
 };
